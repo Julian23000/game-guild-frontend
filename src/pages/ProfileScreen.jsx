@@ -8,8 +8,12 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
+  const navigation = useNavigation();
+  const { signOut } = useAuth();
   const user = {
     name: "nart",
     avatar: "https://i.pravatar.cc/150?img=11",
@@ -52,6 +56,7 @@ export default function Profile() {
           styles.button,
           { backgroundColor: "#b91c1c", marginBottom: 60 },
         ]}
+        onPress={signOut}
       >
         <Ionicons name="log-out-outline" size={18} color="white" />
         <Text style={styles.buttonText}>logout</Text>
