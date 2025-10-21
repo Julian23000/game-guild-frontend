@@ -33,19 +33,16 @@ function GameCard({ game }) {
 }
 
 export default function Games() {
-  const [games, setGames] = useState([]); // displayed games (added by user)
+  const [games, setGames] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // search state and server results
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
 
-  // manual add fields (optional)
   const [manualName, setManualName] = useState('');
   const [manualPlatform, setManualPlatform] = useState('');
   const [manualAchStr, setManualAchStr] = useState('');
 
-  // query backend when searchTerm changes
   useEffect(() => {
     let mounted = true;
     const q = (searchTerm || '').trim();
@@ -69,7 +66,6 @@ export default function Games() {
   }
 
   async function addGameFromServer(item) {
-    // display the game in frontend list
     const newGame = {
       id: Date.now().toString(),
       name: item.name,
@@ -79,7 +75,6 @@ export default function Games() {
     setGames((prev) => [newGame, ...prev]);
     setModalVisible(false);
 
-    // create GameEntry on backend (do NOT send hardcoded userId here)
     try {
       await createEntry({
         gameId: item._id || item.externalId || item.id,
@@ -104,10 +99,9 @@ export default function Games() {
     setGames((prev) => [newGame, ...prev]);
     setModalVisible(false);
 
-    // Optionally create entry on backend (without hardcoded userId)
     try {
       await createEntry({
-        gameId: name, // adjust if your backend requires a Game _id/externalId instead
+        gameId: name,
         status: 'Wishlist',
         achievementsUnlocked: 0,
       });
@@ -187,7 +181,6 @@ export default function Games() {
   );
 }
 
-// ...styles (keep existing styles from your file)...
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#121212', paddingTop: 40, paddingHorizontal: 16 },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
