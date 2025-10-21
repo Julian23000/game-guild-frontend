@@ -7,6 +7,7 @@ import Home from './pages/home';
 import Leaderboard from './pages/leaderboard';
 import Profile from './pages/profile';
 import { View, Text } from 'react-native';
+import Games from './pages/games';
 
 const Tab = createBottomTabNavigator();
 
@@ -39,7 +40,7 @@ export default function App() {
       >
         <Tab.Screen name="home" component={Home} />
         <Tab.Screen name="leaderboard" component={Leaderboard} />
-        <Tab.Screen name="games" children={() => <Placeholder name="games" />} />
+       <Tab.Screen name="games" component={Games} />
         <Tab.Screen name="profile" component={Profile} />
       </Tab.Navigator>
     </NavigationContainer>
