@@ -14,31 +14,30 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { register as registerUser } from "../services/auth";
 import { useAuth } from "../context/AuthContext";
 
 export default function RegisterScreen() {
   const navigation = useNavigation();
-  const { devBypass } = useAuth();
+  const { register: registerUser, isLoading } = useAuth();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onSubmit = async () => {
     if (!username || !email || !password) {
-      Alert.alert("missing info", "please fill all fields");
+      setErrorMessage("please fill all fields");
       return;
     }
     try {
-      setLoading(true);
-      const res = await registerUser({ username, email, password });
-      Alert.alert("success", "registration complete, you can login now");
-      navigation.navigate("login");
+      setErrorMessage("");
+      await registerUser({ username, email, password });
     } catch (err) {
-      Alert.alert("register failed", err.message || "unknown error");
-    } finally {
-      setLoading(false);
+      setErrorMessage(
+        err?.message ||
+          err?.body?.message ||
+          "unable to register right now, please try again"
+      );
     }
   };
 
@@ -87,12 +86,16 @@ export default function RegisterScreen() {
           />
         </View>
 
+        {!!errorMessage && (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        )}
+
         <TouchableOpacity
           style={styles.button}
           onPress={onSubmit}
-          disabled={loading}
+          disabled={isLoading}
         >
-          {loading ? (
+          {isLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <>
@@ -171,6 +174,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: 6,
     textTransform: "capitalize",
+  },
+  errorText: {
+    color: "#f87171",
+    fontSize: 13,
+    marginBottom: 12,
+    textAlign: "center",
+    textTransform: "lowercase",
   },
   linkRow: {
     marginTop: 12,

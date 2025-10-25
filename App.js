@@ -7,8 +7,9 @@ import Leaderboard from "./src/pages/Leaderboard";
 import Profile from "./src/pages/ProfileScreen";
 import LoginScreen from "./src/pages/LoginScreen";
 import RegisterScreen from "./src/pages/RegisterScreen";
-import { View, Text } from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
+import Games from "./src/pages/Games";
 
 const Tab = createBottomTabNavigator();
 
@@ -45,10 +46,10 @@ function AppTabs() {
         },
       })}
     >
-      <Tab.Screen name="home" component={Home} />
-      <Tab.Screen name="leaderboard" component={Leaderboard} />
-      <Tab.Screen name="games" children={() => <Placeholder name="games" />} />
-      <Tab.Screen name="profile" component={Profile} />
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Leaderboard" component={Leaderboard} />
+      <Tab.Screen name="Games" component={Games} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 }
@@ -62,16 +63,54 @@ function AuthTabs() {
         tabBarButton: () => null,
       }}
     >
-      <Tab.Screen name="login" component={LoginScreen} />
-      <Tab.Screen name="register" component={RegisterScreen} />
+      <Tab.Screen name="Login" component={LoginScreen} />
+      <Tab.Screen name="Register" component={RegisterScreen} />
     </Tab.Navigator>
   );
 }
 
 function RootNavigation() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isReady, healthStatus } = useAuth();
+
+  if (!isReady) {
+    return (
+      <View style={styles.fullscreenCenter}>
+        <ActivityIndicator size="large" color="#4ade80" />
+        <Text style={styles.loadingText}>Loading profile...</Text>
+      </View>
+    );
+  }
+
+  if (healthStatus === "error" && !isAuthenticated) {
+    return (
+      <View style={styles.fullscreenCenter}>
+        <Ionicons name="warning" size={32} color="#facc15" />
+        <Text style={[styles.loadingText, { marginTop: 12 }]}>
+          Sserver offline — check your API
+        </Text>
+      </View>
+    );
+  }
+
   return isAuthenticated ? <AppTabs /> : <AuthTabs />;
 }
+
+const styles = StyleSheet.create({
+  fullscreenCenter: {
+    flex: 1,
+    backgroundColor: "#121212",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  loadingText: {
+    color: "#e5e5e5",
+    marginTop: 16,
+    textAlign: "center",
+    textTransform: "lowercase",
+    letterSpacing: 0.2,
+  },
+});
 
 export default function App() {
   return (

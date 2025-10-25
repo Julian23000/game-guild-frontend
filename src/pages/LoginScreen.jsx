@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
@@ -14,30 +13,29 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { login } from "../services/auth";
 import { useAuth } from "../context/AuthContext";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
-  const { signIn } = useAuth();
+  const { login: loginUser, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onSubmit = async () => {
     if (!email || !password) {
-      Alert.alert("missing info", "please fill email and password");
+      setErrorMessage("please fill email and password");
       return;
     }
     try {
-      setLoading(true);
-      const res = await login({ email, password });
-      Alert.alert("welcome", "login successful");
-      signIn();
+      setErrorMessage("");
+      await loginUser({ email, password });
     } catch (err) {
-      Alert.alert("login failed", err.message || "unknown error");
-    } finally {
-      setLoading(false);
+      setErrorMessage(
+        err?.message ||
+          err?.body?.message ||
+          "unable to login right now, please try again"
+      );
     }
   };
 
@@ -80,12 +78,16 @@ export default function LoginScreen() {
               />
             </View>
 
+            {!!errorMessage && (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            )}
+
             <TouchableOpacity
               style={styles.button}
               onPress={onSubmit}
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? (
+              {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
                 <>
@@ -177,6 +179,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: 6,
     textTransform: "capitalize",
+  },
+  errorText: {
+    color: "#f87171",
+    fontSize: 13,
+    marginBottom: 12,
+    textAlign: "center",
+    textTransform: "lowercase",
   },
   linkRow: {
     marginTop: 12,
