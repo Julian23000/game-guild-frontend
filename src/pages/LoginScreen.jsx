@@ -99,7 +99,7 @@ export default function LoginScreen() {
 
             <TouchableOpacity
               style={[styles.linkRow]}
-              onPress={() => navigation.navigate("register")}
+              onPress={() => navigation.navigate("Register")}
             >
               <Text style={styles.linkText}>No account? Register</Text>
             </TouchableOpacity>

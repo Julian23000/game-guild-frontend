@@ -38,10 +38,10 @@ function AppTabs() {
         tabBarInactiveTintColor: "#888",
         tabBarIcon: ({ color, size }) => {
           let iconName;
-          if (route.name === "home") iconName = "home";
-          else if (route.name === "leaderboard") iconName = "trophy";
-          else if (route.name === "games") iconName = "game-controller";
-          else if (route.name === "profile") iconName = "person";
+          if (route.name === "Home") iconName = "home";
+          else if (route.name === "Leaderboard") iconName = "trophy";
+          else if (route.name === "Games") iconName = "game-controller";
+          else if (route.name === "Profile") iconName = "person";
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
